@@ -5,12 +5,12 @@
 FROM centos:latest
 
 ENV CLUSTER_NAME=myCluster \
-    MINIMUM_MASTER_NODES=3 \
-    NODE_NAME_01=node_01 \
-    NODE_NAME_02=node_02 \
-    NODE_NAME_03=node_03 \
-    NODE_NAME_04=node_04 \
-    NODE_NAME_05=node_05 
+    MINIMUM_MASTER_NODES=2 \
+    MASTER_NODE_01=master_node_01 \
+    MASTER_NODE_02=master_node_02 \
+    DATA_NODE_01=data_node_01 \
+    DATA_NODE_02=data_node_02 \
+    DATA_NODE_03=data_node_03 
 
 ##======== Elasticsearch =================
 ## Includes:
@@ -25,12 +25,13 @@ RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch && \
     yum install -y elasticsearch initscripts sudo which wget java-1.8.0-openjdk.x86_64
 ##========================================
 ##==== Build 5 elasticsearch nodes =======
-ADD add-new-elasticsearch-node.sh /add-new-elasticsearch-node.sh
-RUN sh /add-new-elasticsearch-node.sh ${NODE_NAME_01} 9201 && \
-    sh /add-new-elasticsearch-node.sh ${NODE_NAME_02} 9202 && \
-    sh /add-new-elasticsearch-node.sh ${NODE_NAME_03} 9203 && \
-    sh /add-new-elasticsearch-node.sh ${NODE_NAME_04} 9204 && \
-    sh /add-new-elasticsearch-node.sh ${NODE_NAME_05} 9205
+ADD add-elasticsearch-master-node.sh /add-elasticsearch-master-node.sh
+ADD add-elasticsearch-data-node.sh /add-elasticsearch-data-node.sh
+RUN sh /add-elasticsearch-master-node.sh ${MASTER_NODE_01} 9201 && \
+    sh /add-elasticsearch-master-node.sh ${MASTER_NODE_02} 9202 && \
+    sh /add-elasticsearch-data-node.sh ${DATA_NODE_01} 9203 && \
+    sh /add-elasticsearch-data-node.sh ${DATA_NODE_02} 9204 && \
+    sh /add-elasticsearch-data-node.sh ${DATA_NODE_03} 9205
 ##========================================
 
 
